@@ -83,3 +83,14 @@ func (t *Tsp) CopySalesman(sm *Salesman) *Salesman {
 
 	return smc
 }
+
+func (t *Tsp) RollbackCopy(sm *Salesman, returnBy uint64) *Salesman {
+
+	smc := t.NewSalesman()
+	count := copy(smc.Path, sm.Path[:returnBy])
+	if count != len(sm.Path[:returnBy]) {
+		log.Fatalln("Failed to copy rolled back path")
+	}
+
+	return smc
+}

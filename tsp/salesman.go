@@ -10,14 +10,18 @@ type Salesman struct {
 }
 
 func (sm *Salesman) Visit(nodeID uint64) {
-	sm.Visited += (1 << nodeID)
+	sm.Visited = sm.Visited ^ (1 << nodeID)
+}
+
+func (sm *Salesman) UnVisit(nodeID uint64) {
+	sm.Visited = sm.Visited &^ (1 << nodeID)
 }
 
 func (sm *Salesman) HasVisited(nodeID uint64) bool {
 	var bit uint64 = 1 << nodeID // get position of bit corresponding to given node
 	mask := sm.Visited
 
-	mask = mask & bit // XOR mask with bit
+	mask = mask & bit // AND mask with bit
 	mask = mask >> nodeID
 	mask = mask << 63 >> 63
 
