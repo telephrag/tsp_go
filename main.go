@@ -14,7 +14,7 @@ func measureExecTime(f func()) {
 }
 
 func main() {
-	t := tsp.Init("input_a.json")
+	t := tsp.Init("input_b.json")
 	t.Solve()
 
 	//fmt.Printf("Solution: %v %d\n", t.MinPath, t.MinDist)

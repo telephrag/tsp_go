@@ -31,4 +31,10 @@ func (t *Tsp) Solve() {
 	// smc := t.RollbackCopy(sm, sm.Count-1)
 	// fmt.Printf("Testing RollbackCopy: %v\n", smc.Path)
 
+	threadCount := 6
+	for offset := 3; offset != len(graph)-2; offset++ { // would overflow occur if we do 0 - 1 on uint64?
+		fmt.Printf("%3d %3d\n", offset, threadCount)
+		threadCount *= offset
+	}
+
 }
