@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"time"
+	"tsp/config"
 	"tsp/tsp"
 )
 
@@ -14,8 +15,8 @@ func measureExecTime(f func()) {
 }
 
 func main() {
-	t := tsp.Init("input_b.json")
-	measureExecTime(t.Solve)
+	t := tsp.Init("input_a.json", config.MaxRoutes)
+	t.Solve()
 
 	fmt.Printf("Solution: %v %d\n", t.MinPath, t.MinDist)
 }

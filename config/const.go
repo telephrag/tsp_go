@@ -1,3 +1,3 @@
 package config
 
-const MaxOngoingTravels = 8
+const MaxRoutes = 8

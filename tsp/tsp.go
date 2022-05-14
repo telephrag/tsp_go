@@ -2,15 +2,13 @@ package tsp
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"math"
 	"sync"
-	"sync/atomic"
 )
 
-var graph []map[uint64]uint64 // consider passing as parameters instead of storing globally
+var graph []map[uint64]uint64
 
 type Graph struct {
 	Graph     []map[uint64]uint64 `json:"adjList"`   // graph as adjancency list
@@ -18,15 +16,15 @@ type Graph struct {
 }
 
 type Tsp struct {
-	NodeCount     uint64
-	MinPath       []uint64
-	MinDist       uint64 // current minimal path length
-	SalesmenCount uint64
-	Wg            sync.WaitGroup
+	NodeCount     uint64    // amount of nodes in travelled graph
+	MinPath       []uint64  // current shortest route
+	MinDist       uint64    // current shortest route length
+	SalesmenCount uint64    // used for issuing IDs to salesmen
+	RouteQueue    chan bool // used to limit amount of concurrent travels
 	Mu            sync.Mutex
 }
 
-func Init(inputPath string) *Tsp {
+func Init(inputPath string, maxRoutes int) *Tsp {
 
 	content, err := ioutil.ReadFile(inputPath)
 	if err != nil {
@@ -43,43 +41,9 @@ func Init(inputPath string) *Tsp {
 	t.NodeCount = g.NodeCount
 	t.MinPath = make([]uint64, g.NodeCount)
 	t.MinDist = math.MaxUint64
+	t.RouteQueue = make(chan bool, maxRoutes)
 
 	graph = g.Graph
 
 	return &t
-}
-
-func (t *Tsp) NewSalesman() *Salesman {
-	return &Salesman{
-		ID:   atomic.AddUint64(&t.SalesmenCount, 1),
-		Path: make([]uint64, t.NodeCount),
-	}
-}
-
-func (t *Tsp) CopySalesman(sm *Salesman) *Salesman {
-	smc := &Salesman{}
-
-	if sm.Copied {
-		smc.ID = atomic.AddUint64(&t.SalesmenCount, 1)
-
-		smc.Path = make([]uint64, len(sm.Path))
-		count := copy(smc.Path, sm.Path)
-		if count != len(sm.Path) {
-			fmt.Println(sm)
-			log.Fatalln("Failed to copy path into salesman's clone")
-		}
-
-	} else {
-		smc.ID = sm.ID // first copy of a salesman is considered the same salesman
-
-		smc.Path = sm.Path
-		sm.Copied = true // now salesman is considered copied
-	}
-
-	smc.Copied = false
-	smc.Distance = sm.Distance
-	smc.Count = sm.Count
-	smc.Visited = sm.Visited
-
-	return smc
 }
