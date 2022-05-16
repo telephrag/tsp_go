@@ -1,3 +1,4 @@
 package config
 
-const MaxOngoingTravels = 8
+const RouteQueueSize = 32
+const MaxTravelers = 16
