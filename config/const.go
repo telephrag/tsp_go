@@ -1,4 +1,4 @@
 package config
 
-const RouteQueueSize = 32
-const MaxTravelers = 16
+const RouteQueueSize = 2048 // 16777216
+const MaxTravelers = 1
